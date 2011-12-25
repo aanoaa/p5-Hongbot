@@ -1,0 +1,46 @@
+#!/usr/bin/env perl
+package hongbot;
+# ABSTRACT: Launch an interactive hongbot
+use strict;
+use warnings;
+use Hongbot;
+use Pod::Usage;
+use Getopt::Long::Descriptive;
+use Config::General 'ParseConfig';
+
+=head1 SYNOPSIS
+
+    $ hongbot -h
+
+=head1 DESCRIPTION
+
+No more description
+
+=cut
+
+my ($opt, $usage) = describe_options(
+    "%c [options]",
+    [ 'help|h',    'Display the help' ],
+    [ 'config|c',  'The File path for running configuration', { default => 'conf/hongbot.conf' } ],
+    [ 'name|n',    'The name of the robot in chat',           { default => 'hongbot' } ],
+);
+
+run($opt, $usage, @ARGV);
+
+sub run {
+    my($opt, $usage, @args) = @_;
+
+    print($usage->text), exit(0) if $opt->help;
+
+    my %conf = ParseConfig($opt->config);
+    my $robot = Hongbot->new({
+        name => $opt->name,
+        channels => [$conf{channel}],
+        plugins => [$conf{plugin}],
+    });
+
+    $robot->run({
+        host => $conf{host},
+        port => $conf{port},
+    });
+}
