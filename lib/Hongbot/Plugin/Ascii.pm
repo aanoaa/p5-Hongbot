@@ -13,6 +13,12 @@ has uri => (
     default => sub { URI->new("http://asciime.heroku.com/generate_ascii") },
 );
 
+has usage => (
+    is => 'ro',
+    isa => 'Str',
+    default => 'ascii <ASCII>',
+);
+
 sub BUILD { shift->_regex(qr/^ascii\s+/i) }
 
 sub hear {
@@ -33,6 +39,12 @@ sub hear {
             }
         };
     }
+}
+
+sub help {
+    my ($self, $cl, $channel) = @_;
+
+    $cl->send_srv('PRIVMSG', $channel, $self->usage);
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -77,7 +77,14 @@ sub _build_irc_client {
             my $bot_name = $self->name;
             if ($msg =~ m/^\s*$bot_name/) {
                 $msg =~ s/^\s*$bot_name\s*:?\s*//;
-                $self->event('respond', $cl, $channel, $nickname, $msg);
+                if ($msg =~ m/^help$/i) {
+                    $self->help($cl, $channel);
+                } elsif ($msg =~ m/^help/i) {
+                    my ($help) = $msg =~ m/^help\s+(.*)$/i;
+                    $self->help($cl, $channel, $help);
+                } else {
+                    $self->event('respond', $cl, $channel, $nickname, $msg);
+                }
             } else {
                 $self->event('hear', $cl, $channel, $nickname, $msg);
             }
@@ -100,6 +107,32 @@ sub parse_msg {
     my ($nickname) = $irc_msg->{prefix} =~ m/^([^!]+)/;
     my $message = $irc_msg->{params}[1];
     return ($nickname, $message);
+}
+
+sub help {
+    my ($self, $client, $channel, $help) = @_;
+
+    if ($help) {
+        foreach my $plugin ( @{ $self->plugin_list } ) {
+            my $name = ref $plugin;
+            $name =~ s/^Hongbot::Plugin:://;
+            if ($help =~ m/^$name$/i) {
+                $plugin->help($client, $channel) if $plugin->can('help');
+            }
+        }
+    } else {
+        my $usage = sprintf("%s: help <name>", $self->name);
+        $client->send_srv('PRIVMSG', $channel, $usage);
+        my @names;
+        foreach my $plugin ( @{ $self->plugin_list } ) {
+            my $name = ref $plugin;
+            $name =~ s/^Hongbot::Plugin:://;
+            $name = lc $name;
+            push @names, $name;
+        }
+
+        $client->send_srv('PRIVMSG', $channel, join(', ', @names));
+    }
 }
 
 sub run {
