@@ -3,6 +3,7 @@ use AnyEvent;
 use AnyEvent::IRC::Client;
 use Moose;
 use namespace::autoclean;
+
 with 'MooseX::Role::Pluggable';
 
 has condvar => (

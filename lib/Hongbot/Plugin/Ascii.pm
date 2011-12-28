@@ -1,7 +1,6 @@
 package Hongbot::Plugin::Ascii;
 use URI;
 use Moose;
-use Time::HiRes;
 use AnyEvent::HTTP;
 use namespace::autoclean;
 extends 'Hongbot::Plugin';
@@ -32,10 +31,9 @@ sub hear {
             undef $guard;
             my ($body, $headers) = @_;
             if ($headers->{Status} =~ m/^2/) {
-                for my $line (split /\n/, $body) {
-                    $cl->send_srv('PRIVMSG', $channel, $line);
-                    Time::HiRes::sleep(0.1);
-                }
+                $self->to_channel($cl, $channel, $body);
+            } else {
+                $self->to_channel($cl, $channel, sprintf("httpCode: %d", $headers->{Status}));
             }
         };
     }
@@ -44,7 +42,7 @@ sub hear {
 sub help {
     my ($self, $cl, $channel) = @_;
 
-    $cl->send_srv('PRIVMSG', $channel, $self->usage);
+    $self->to_channel($cl, $channel, $self->usage);
 }
 
 __PACKAGE__->meta->make_immutable;
