@@ -1,11 +1,10 @@
 package Hongbot::Plugin::Shorten;
-use utf8;
 use URI;
 use Moose;
 use Mojo::DOM;
 use File::Temp;
 use AnyEvent::HTTP;
-use Encode qw(encode decode FB_CROAK);
+use Encode qw(decode encode_utf8);
 use WWW::Shorten 'TinyURL';
 use namespace::autoclean;
 extends 'Hongbot::Plugin';
@@ -16,8 +15,6 @@ override 'regex' => sub { qr{((!)?(?:https?:)(?://[^\s/?#]*)[^\s?#]*(?:\?[^\s#]*
 
 sub hear {
     my ($self, $cl, $channel, $nickname, $msg) = @_;
-
-    warn "$msg\n";
 
     my $regex = $self->regex;
     while ($msg =~ m/$regex/g) {
@@ -64,6 +61,7 @@ sub hear {
                 my $dom = Mojo::DOM->new($data);
                 $dom->charset($charset);
                 my $title = $dom->at('html title')->text || 'no title';
+                $title = encode_utf8($title);
                 $self->to_channel($cl, $channel, "[$title] $shorten");
             };
     }
