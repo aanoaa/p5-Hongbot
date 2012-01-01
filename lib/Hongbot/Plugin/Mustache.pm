@@ -19,7 +19,7 @@ has googleimage => (
     default => sub { URI->new('http://ajax.googleapis.com/ajax/services/search/images') },
 );
 
-override 'usage' => sub { sprintf("%s: mustache <SEARCH WORD>", $_[0]->parent->name) };
+override 'usage' => sub { sprintf("%s: mustache <SEARCH WORD|IMG_URL>", $_[0]->parent->name) };
 override 'regex' => sub { qr/^mustache\s+/i };
 
 sub respond {
