@@ -13,7 +13,7 @@ has uri => (
     default => sub { URI->new("http://api.dan.co.jp/lleval.cgi") },
 );
 
-has prefix => (is => 'ro', isa => 'Str', default => '#!/usr/bin/perl\n');
+has prefix => (is => 'ro', isa => 'Str', default => "#!/usr/bin/perl\n");
 
 override 'usage' => sub { sprintf("%s: eval <PERL_CODE>", $_[0]->parent->name) };
 override 'regex' => sub { qr/^eval\s+/i };
