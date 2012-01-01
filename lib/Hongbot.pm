@@ -113,6 +113,11 @@ sub parse_msg {
 sub help {
     my ($self, $client, $channel, $help) = @_;
 
+    unless ($self->plugin_list) {
+        $client->send_srv('PRIVMSG', $channel, 'no help');
+        return;
+    }
+
     if ($help) {
         foreach my $plugin ( @{ $self->plugin_list } ) {
             my $name = ref $plugin;
@@ -125,6 +130,7 @@ sub help {
         my $usage = sprintf("%s: help <name>", $self->name);
         $client->send_srv('PRIVMSG', $channel, $usage);
         my @names;
+
         foreach my $plugin ( @{ $self->plugin_list } ) {
             my $name = ref $plugin;
             $name =~ s/^Hongbot::Plugin:://;
@@ -153,6 +159,8 @@ sub run {
 
 sub event {
     my ($self, $event, @args) = @_;
+
+    return unless $self->plugin_list;
 
     foreach my $plugin ( @{ $self->plugin_list } ) {
         $plugin->$event(@args) if $plugin->can($event);
