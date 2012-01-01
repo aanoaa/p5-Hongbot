@@ -33,10 +33,13 @@ sub run {
     print($usage->text), exit(0) if $opt->help;
 
     my %conf = ParseConfig($opt->config);
+    my $plugins = $conf{plugin};
+    $plugins = [$plugins] if ref $plugins ne 'ARRAY';
+
     my $robot = Hongbot->new({
         name => $opt->name,
         channels => [$conf{channel}],
-        plugins => [$conf{plugin}],
+        plugins => $plugins,
     });
 
     $robot->run({

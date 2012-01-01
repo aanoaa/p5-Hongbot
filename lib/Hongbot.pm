@@ -135,7 +135,7 @@ sub help {
             my $name = ref $plugin;
             $name =~ s/^Hongbot::Plugin:://;
             $name = lc $name;
-            push @names, $name;
+            push @names, "<$name>";
         }
 
         $client->send_srv('PRIVMSG', $channel, join(', ', @names));
