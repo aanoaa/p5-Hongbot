@@ -23,6 +23,11 @@ sub hear {
         next unless $uri->scheme && $uri->scheme =~ m/^http/i;
         next unless $uri->authority;
 
+        if ($uri->host =~ m/twitter/i) {
+            my $plist = $self->parent->plugin_list;
+            return if ($plist && grep { /twitter/i } @$plist);
+        }
+
         if (length "$uri" > 50 && $uri->authority !~ /tinyurl|bit\.ly/) {
             $shorten = URI->new(makeashorterlink($uri))
         } else {
