@@ -40,8 +40,8 @@ sub to_channel {
                 if (length "$uri" > 50 && $uri->authority !~ /tinyurl|bit\.ly/) {
                     $shorten_url = makeashorterlink($uri);
                     $uri = URI->new($shorten_url);
-                    $cl->send_srv($self->_COMMAND, $channel, $uri->as_string);
                 }
+                $cl->send_srv($self->_COMMAND, $channel, $uri->as_string);
             } else {
                 $cl->send_srv($self->_COMMAND, $channel, $line);
             }

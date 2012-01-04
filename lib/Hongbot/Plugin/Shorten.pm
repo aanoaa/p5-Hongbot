@@ -35,7 +35,7 @@ sub hear {
         }
 
         my $file;
-        my $is_html;
+        my ($is_html, $content_type, $charset);
         my $guard; $guard = http_get $uri,
             on_header => sub {
                 my ($headers) = @_;
@@ -45,29 +45,32 @@ sub hear {
                     return;
                 }
 
-                $is_html = 1 if $headers->{'content-type'} =~ m/html/i;
+                $content_type = $headers->{'content-type'};
+                $is_html = 1 if $content_type =~ m/html?/i;
+                ($charset) = $content_type =~ m{charset\s*=\s*(\w+)}i;
             },
             on_body => sub {
+                return unless $is_html;
+
                 $file ||= File::Temp->new(UNLINK => 1);
                 print $file $_[0];
                 return 1;
             },
             sub {
                 undef $guard;
+                $self->to_channel($cl, $channel, "[$content_type] - $shorten") unless $is_html;
                 return unless $file;
                 seek($file, 0, 0);
-                my $octets = do { local $/; <$file> };
-                my $charset = 'utf8';
-                if ($octets =~ /charset=(?:'([^']+?)'|"([^"]+?)"|([a-zA-Z0-9_-]+)\b)/) {
-                    $charset = lc($1 || $2 || $3 || 'utf8');
-                }
-
-                my $data = decode($charset, $octets);
+                my $unknown = do { local $/; <$file> };
+                ($charset) = $unknown =~ m{charset=['"]?([^'"]+)['"]}i unless $charset;
+                $charset //= 'utf8';
+                $charset = 'euckr' if $charset =~ m/^ks/i; # ks_c_5601-1987
+                my $data = decode($charset, $unknown);
                 my $dom = Mojo::DOM->new($data);
                 $dom->charset($charset);
                 my $title = $dom->at('html title')->text || 'no title';
                 $title = encode_utf8($title);
-                $self->to_channel($cl, $channel, "[$title] $shorten");
+                $self->to_channel($cl, $channel, "[$title] - $shorten");
             };
     }
 }
