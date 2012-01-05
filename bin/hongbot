@@ -45,5 +45,6 @@ sub run {
     $robot->run({
         host => $conf{host},
         port => $conf{port},
+        password => $conf{password},
     });
 }

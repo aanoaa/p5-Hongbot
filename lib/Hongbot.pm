@@ -144,13 +144,14 @@ sub help {
 
 sub run {
     my ($self, $connect_info) = @_;
-    $self->condvar->begin;
 
+    $self->condvar->begin;
     $self->irc_client->connect(
         $connect_info->{host},
         $connect_info->{port},
         {
-            nick => $self->name
+            nick => $self->name,
+            password => $connect_info->{password} || '',
         }
     );
 
