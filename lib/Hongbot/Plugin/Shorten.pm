@@ -72,7 +72,7 @@ sub hear {
                 $is_text = $content_type =~ m/text/i;
                 return unless $is_text;
 
-                ($charset) = $content_type =~ m{charset\s*=\s*(\w+)}i;
+                ($charset) = $content_type =~ m{charset\s*=\s*([^\s]+)}i;
                 return 1;
             },
             on_body => sub {
@@ -88,6 +88,7 @@ sub hear {
                 ($charset) = $unknown =~ m{charset=['"]?([^'"]+)['"]}i unless $charset;
                 $charset //= 'utf8';
                 $charset = 'euckr' if $charset =~ m/^ks/i; # ks_c_5601-1987
+                $charset = lc $charset;
                 my $data = decode($charset, $unknown);
                 my $dom = Mojo::DOM->new($data);
                 $dom->charset($charset);
