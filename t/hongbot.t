@@ -40,11 +40,11 @@ $client->mock(
             $i++;
             return;
         } elsif ($i == 1) {
-            like($msg, qr/^ascii$/, 'help list');
+            like($msg, qr/ascii/, 'help list');
             $i++;
             $robot->condvar->end;
         } else {
-            like($msg, qr/^ascii/, 'each plugin help');
+            like($msg, qr/ascii/, 'each plugin help');
             $robot->condvar->end;
         }
     }
