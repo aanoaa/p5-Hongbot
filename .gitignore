@@ -1,6 +1,12 @@
-cover_db/
+*.log
 .carton/
-local/
+META.yml
 MYMETA.json
 MYMETA.yml
 Makefile
+Makefile.old
+blib/
+checkstyle-result.xml
+cover_db/
+inc/
+local/
