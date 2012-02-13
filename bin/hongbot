@@ -20,9 +20,10 @@ No more description
 
 my ($opt, $usage) = describe_options(
     "%c [options]",
-    [ 'help|h',    'Display the help' ],
-    [ 'config|c',  'The File path for running configuration', { default => 'conf/hongbot.conf' } ],
-    [ 'name|n',    'The name of the robot in chat',           { default => 'hongbot' } ],
+    [ 'help|h',      'Display the help' ],
+    [ 'config|c',    'The File path for running configuration', { default => 'conf/hongbot.conf' } ],
+    [ 'name|n',      'The name of the robot in chat',           { default => 'hongbot' } ],
+    # [ 'daemonize|D', 'running background if set',               { default => 0 } ],
 );
 
 run($opt, $usage, @ARGV);
@@ -47,4 +48,15 @@ sub run {
         port => $conf{port},
         password => $conf{password},
     });
+
+    # $robot->daemon_detach if $conf{daemonize};
+}
+
+sub daemon_detach {
+    my $self = shift;
+    print "Hongbot daemon started (pid $$)\n";
+    open STDIN,  "+</dev/null" or die $!; ## no critic
+    open STDOUT, ">&STDIN"     or die $!;
+    open STDERR, ">&STDIN"     or die $!;
+    POSIX::setsid();
 }

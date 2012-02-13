@@ -22,11 +22,10 @@ requires "Devel::Cover::Report::Clover" => 0;
 requires "WWW::Shorten" => 0;
 requires "Mojolicious" => 0;
 requires "Net::SSLeay" => 0;
+requires "Lingua::KO::Hangul::Util" => 0;
 
 tests 't/*.t';
 test_requires 'Test::More';
 resources repository => 'git://github.com/aanoaa/Hongbot.git';
 auto_include;
 WriteAll;
-
-
