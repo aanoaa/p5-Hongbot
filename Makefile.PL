@@ -15,6 +15,7 @@ requires "URI" => 0;
 requires "namespace::autoclean" => 0;
 requires "strict" => 0;
 requires "warnings" => 0;
+requires "Devel::Cover" => 0;
 requires "Devel::Cover::DB" => 0;
 requires "Perl::Metrics::Lite" => 0;
 requires "TAP::Formatter::JUnit" => 0;
