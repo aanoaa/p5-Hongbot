@@ -10,3 +10,4 @@ checkstyle-result.xml
 cover_db/
 inc/
 local/
+logs/tests.xml
