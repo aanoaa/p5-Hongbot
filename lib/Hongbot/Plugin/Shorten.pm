@@ -92,7 +92,8 @@ sub hear {
                 my $data = decode($charset, $unknown);
                 my $dom = Mojo::DOM->new($data);
                 $dom->charset($charset);
-                my $title = $dom->at('html title')->text || 'no title';
+                my $title = $dom->at('html title');
+                $title = $title ? $title->text : 'no title';
                 $title = encode_utf8($title);
                 $self->to_channel($cl, $channel, "[$title] - $shorten");
             };
