@@ -87,6 +87,7 @@ sub hear {
                 my $unknown = do { local $/; <$file> };
                 ($charset) = $unknown =~ m{charset=['"]?([^'"]+)['"]}i unless $charset;
                 $charset =~ s{\s*/>.*}{}s;
+                $charset =~ s{;}{}s;
                 $charset //= 'utf8';
                 $charset = 'euckr' if $charset =~ m/^ks/i; # ks_c_5601-1987
                 $charset = lc $charset;
