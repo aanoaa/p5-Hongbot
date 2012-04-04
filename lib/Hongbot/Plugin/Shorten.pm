@@ -90,12 +90,16 @@ sub hear {
                 $charset = 'utf8' if $charset =~ m/utf/i; # ks_c_5601-1987
                 $charset = 'euckr' if $charset =~ m/^ks/i; # ks_c_5601-1987
                 $charset = lc $charset;
-                my $data = decode($charset, $unknown);
-                my $dom = Mojo::DOM->new($data);
-                $dom->charset($charset);
-                my $title = $dom->at('html title');
-                $title = $title ? $title->text : 'no title';
-                $title = encode_utf8($title);
+                my $title = 'no title';
+                eval {
+                    my $data = decode($charset, $unknown);
+                    my $dom = Mojo::DOM->new($data);
+                    $dom->charset($charset);
+                    $title = $dom->at('html title');
+                    $title = $title ? $title->text : 'no title';
+                    $title = encode_utf8($title);
+                };
+
                 $self->to_channel($cl, $channel, "[$title] - $shorten");
             };
     }
