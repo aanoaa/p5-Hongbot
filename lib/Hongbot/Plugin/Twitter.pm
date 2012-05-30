@@ -28,8 +28,9 @@ sub hear {
                 ($nick) = $uri =~ m{(\w+)/status};
                 $tweet =~ s{<[^>]*>}{}g;
             } else {
-                ($nick) = $body =~ m{<title id="page_title">Twitter / ([^:]*)};
-                ($tweet) = $body =~ m{<meta content="([^"]*)" name="description" />}m;
+                ($nick) = $body =~ m{data-screen-name="([^"]*)"};
+                ($tweet) = $body =~ m{<p class="js-tweet-text tweet-text "><a class="twitter-atreply pretty-link"[^>]*>(.*)</p>};
+                $tweet =~ s{<[^>]*>}{}g;
             }
 
             $tweet =~ s/&amp;/&/g;
